@@ -63,13 +63,18 @@ DATABASE_URL=postgresql://user:password@host:5432/habit_tracker
 
 ## ☁️ Deploy
 
+Live production URLs (verified working end-to-end, incl. `GET`/`POST`/`DELETE` through the API proxy):
+
+- **Frontend:** https://frontend-one-mu-63.vercel.app
+- **Backend API:** https://backend-delta-tawny-78.vercel.app
+
 | Piece | Where | How |
 | --- | --- | --- |
-| Frontend | **Vercel** | Repo → import → set `API_URL` to your deployed backend URL |
-| Backend | **Railway / Render / Vercel functions** | Set `DATABASE_URL` (e.g. free **Neon** Postgres) |
+| Frontend | **Vercel** | Import the repo → set `API_URL` to your backend URL |
+| Backend | **Vercel** (or Railway/Render) | Set `DATABASE_URL` (e.g. free **Neon** Postgres) |
 | Database | **Neon / Supabase** (free Postgres) | Create a project, copy the URL |
 
-The frontend rewrites `/api/*` to `API_URL` (see `frontend/next.config.ts`), so everything stays same-origin.
+The backend is **serverless-compatible**: on Vercel it skips `app.listen`, and the JSON fallback store writes to `/tmp`. **Without `DATABASE_URL`, serverless data is ephemeral** — for persistent data shared across visits, add a PostgreSQL `DATABASE_URL` env var. The frontend rewrites `/api/*` to `API_URL` (see `frontend/next.config.ts`).
 
 ## 📁 Structure
 
