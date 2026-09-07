@@ -152,7 +152,11 @@ app.use((err, _req, res, _next) => {
 });
 
 const PORT = Number(process.env.PORT) || 4000;
-app.listen(PORT, () => {
-  console.log(`\n  ⚡ Habit Tracker API  →  http://localhost:${PORT}`);
-  console.log(`  📦 ${process.env.DATABASE_URL ? 'PostgreSQL connected' : 'JSON file store (./data/store.json)'}\n`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`\n  Habit Tracker API  ->  http://localhost:${PORT}`);
+    console.log(`  ${process.env.DATABASE_URL ? 'PostgreSQL connected' : 'JSON file store (./data/store.json)'}\n`);
+  });
+}
+
+export default app;

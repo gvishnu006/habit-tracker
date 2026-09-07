@@ -1,11 +1,13 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import pg from 'pg';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, '..', 'data');
+const DATA_DIR = process.env.VERCEL ? tmpdir() : join(__dirname, '..', 'data');
 const DATA_FILE = join(DATA_DIR, 'store.json');
+const isServerless = !!process.env.VERCEL;
 
 /* ─────────────────────────────────────────────────────────────────────
  *  PostgreSQL store — used whenever DATABASE_URL is present.
@@ -232,7 +234,7 @@ export async function createStore() {
   let store;
 
   if (!url) {
-    console.log('[store] DATABASE_URL not set → using JSON file store (./data/store.json)');
+    console.log(`[store] DATABASE_URL not set → using JSON file store (${DATA_FILE})${isServerless ? ' — ephemeral on serverless, set DATABASE_URL for persistence' : ''}`);
     store = makeFileStore();
   } else {
     const candidate = makePgStore(url);
