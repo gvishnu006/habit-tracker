@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--next-font-display);
+  --font-body: var(--next-font-body);
+  --color-ink: #07070f;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #07070f;
+  color: #f4f4ff;
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #a855f7;
+  color: #fff;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+*::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ── Aurora background blobs ───────────────────────────────────────── */
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate3d(8vw, -6vh, 0) scale(1.25) rotate(40deg);
+  }
+  50% {
+    transform: translate3d(-6vw, 5vh, 0) scale(0.9) rotate(90deg);
+  }
+  75% {
+    transform: translate3d(5vw, 8vh, 0) scale(1.18) rotate(150deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(360deg);
+  }
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  animation: aurora-drift 26s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Starfield ─────────────────────────────────────────────────────── */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #fff;
+  animation: twinkle ease-in-out infinite;
+}
+
+/* ── Animated gradient text ────────────────────────────────────────── */
+@keyframes hue-rotate {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(
+    100deg,
+    #f59e0b,
+    #ec4899 25%,
+    #a855f7 50%,
+    #06b6d4 75%,
+    #f59e0b
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 8s linear infinite;
+}
+
+@keyframes gradient-shift {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Rotating conic ring (milestone frame) ─────────────────────────── */
+@keyframes spin-ring {
+  to {
+    --ring: 360deg;
+  }
+}
+
+@property --ring {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.conic-frame {
+  background: conic-gradient(
+      from var(--ring),
+      #f59e0b,
+      #ec4899,
+      #a855f7,
+      #06b6d4,
+      #22c55e,
+      #f59e0b
+    );
+  animation: spin-ring 3s linear infinite;
+}
+
+/* ── Soft pulsing glow used on live cards ──────────────────────────── */
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.glow-breathe {
+  animation: glow-breathe 3.2s ease-in-out infinite;
+}
+
+/* ── Liquid wave for the check button fill ─────────────────────────── */
+@keyframes wave-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.liquid-wave {
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  animation: wave-slide 1.4s ease-in-out infinite;
+}
+
+/* ── Glass utility ─────────────────────────────────────────────────── */
+.glass {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(18px);
+}
+
+.glass-strong {
+  background: linear-gradient(
+    160deg,
+    rgba(20, 18, 40, 0.92),
+    rgba(10, 9, 24, 0.94)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px);
+}

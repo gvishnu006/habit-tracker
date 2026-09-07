@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  CUSTOM
+}
+
+enum HabitStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model User {
+  id                    String            @id @default(cuid())
+  email                 String            @unique
+  username              String            @unique
+  passwordHash          String
+  name                  String?
+  timezone              String            @default("UTC")
+  theme                 String            @default("system")
+  notificationEnabled   Boolean           @default(true)
+  reminderDefaultTime   String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  habits                Habit[]
+  completions           HabitCompletion[]
+  achievements          UserAchievement[]
+  settings              UserSettings?
+}
+
+model UserSettings {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyGoal     Int      @default(3)
+  weeklyGoal    Int?
+  weeklyResetDay Int     @default(0)
+  reminderTime  String?
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(true)
+  weeklyDigest  Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Habit {
+  id           String          @id @default(cuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  icon         String          @default("target")
+  color        String          @default("#10b981")
+  frequency    Frequency       @default(DAILY)
+  targetDays   Int             @default(1)
+  reminderTime String?
+  startDate    DateTime        @default(now())
+  archivedAt   DateTime?
+  status       HabitStatus     @default(ACTIVE)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  completions  HabitCompletion[]
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([startDate])
+}
+
+model HabitCompletion {
+  id        String   @id @default(cuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, date])
+  @@index([userId, date])
+  @@index([habitId, date])
+}
+
+model Achievement {
+  id        String            @id @default(cuid())
+  code      String            @unique
+  name      String
+  description String
+  icon      String
+  threshold Int
+  unit      String            @default("streak")
+  createdAt DateTime          @default(now())
+  users     UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  achievedAt    DateTime    @default(now())
+  streakDays    Int?
+  habitId       String?
+  metadata      Json?
+
+  @@unique([userId, achievementId])
+  @@index([userId, achievedAt])
+}
